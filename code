@@ -1,0 +1,86 @@
+#include <iostream>
+#include <string>
+#include <cctype>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+float Operations(vector<float>& nums, vector<char>& oper){
+  for(size_t i = 0; i < oper.size(); i++){
+    if(oper[i] == '*' || oper[i] == '/'){
+      float result = (oper[i] == '*') ? nums[i] * nums[i + 1] : nums[i] / nums[i + 1]; 
+      nums[i] = result;
+      nums.erase(nums.begin() + i + 1);
+      oper.erase(oper.begin() + i);
+      --i;
+    }
+  }
+  
+  float result = nums[0];
+  for (size_t i = 0; i < oper.size(); ++i) { 
+    if (oper[i] == '+') { 
+      result += nums[i + 1]; 
+    } else if (oper[i] == '-'){
+      result -= nums[i + 1]; 
+      }
+  }
+  return result;
+}
+
+int counter = 0;
+vector<float> nums;
+vector<char> oper;
+void Doublech(){
+  if(counter % 2 == 0){
+    if(oper.size() != nums.size()){
+      cout << "Error. Input number." << endl;
+    }
+  }
+}
+int main(){
+
+  vector<float> nums; 
+  vector<char> oper;
+  string input;
+  bool end = false;
+  bool expect_number = true;
+  
+  do {
+    cout << "Введите число или оператор (+, -, *, /) или '=' для результата: " << endl;
+    cin >> input;
+    bool is_number = all_of(input.begin(), input.end(), ::isdigit);
+
+    if(is_number){
+      if(!expect_number){
+        cout << "error" << endl;
+        continue;
+      }
+      nums.push_back(stof(input));
+      expect_number = false;
+    } else{
+      char op = input[0];
+      if(op == '='){
+        if(expect_number){
+          cout << "error." << endl;
+          continue;
+        }
+        end = true;
+      }else if(op == '+' || op =='-' || op == '*' || op == '/'){
+        if(expect_number){
+          cout << "error" << endl;
+          continue;
+        }
+        oper.push_back(op);
+        expect_number = true;
+      }else{
+        cout << "error" << endl;
+      }
+    }
+  }
+    while(!end);
+
+  float result = Operations(nums, oper);
+  cout << "Результат: " << result << endl;
+    
+return 0;
+} 
